@@ -2,106 +2,97 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的演唱会回忆录</title>
     <style>
-        /* 1. 基础样式 */
         body {
             margin: 0; padding: 0;
-            background-color: #050505; /* 纯黑背景 */
-            color: #fff;
+            background-color: #050505; color: #fff;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            overflow: hidden; /* 防止出现滚动条 */
-            height: 100vh;
+            overflow: hidden; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        /* 2. 霓虹灯标题 */
+        /* 标题适配 */
         .header {
-            position: absolute; top: 30px; text-align: center; z-index: 100;
+            position: absolute; top: 5vh; text-align: center; z-index: 100;
+            width: 100%; padding: 0 10px; box-sizing: border-box; pointer-events: none;
         }
         h1 {
-            margin: 0; font-size: 2.5em; color: #fff;
-            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff00de; /* 金色+粉色霓虹 */
+            margin: 0; 
+            font-size: clamp(1.8rem, 6vw, 2.5rem); /* 根据屏幕大小自动调整字体 */
+            color: #fff; text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
             letter-spacing: 2px;
         }
-        .subtitle { color: #aaa; margin-top: 5px; font-size: 1em; }
+        .subtitle { color: #aaa; margin-top: 5px; font-size: clamp(0.8rem, 3vw, 1rem); }
 
-        /* 3. 3D 场景容器 */
+        /* 3D 舞台适配 */
         .container {
-            width: 100%; height: 80vh;
-            perspective: 2000px; /* 【关键】开启 3D 视距，数值越小透视越强烈 */
+            width: 100%; height: 60vh; margin-top: 5vh;
+            perspective: 1500px;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 4. 旋转的轮子 (卡片容器) */
         .carousel {
-            width: 300px; height: 400px;
+            width: 100%; height: 100%;
             position: relative;
-            transform-style: preserve-3d; /* 【关键】开启 3D 子元素 */
-            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1); /* 流畅旋转 */
-            will-change: transform;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* 5. 通用卡片样式 */
+        /* 卡片自适应大小 */
         .card {
             position: absolute;
-            width: 300px; height: 400px;
-            left: 0; top: 0;
-            background: rgba(255, 255, 255, 0.03); /* 半透明玻璃感 */
-            border: 1px solid rgba(255, 215, 0, 0.3); /* 金色边框 */
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            backface-visibility: hidden; /* 隐藏背面 */
-            transition: box-shadow 0.3s, border 0.3s;
-        }
-        
-        /* 鼠标悬停时的发光效果 */
-        .card:hover {
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-            border: 1px solid #ffd700;
-        }
+            /* 宽度：手机上占 70%，电脑上最大 300px */
+            width: clamp(220px, 70vw, 300px);
+            /* 高度：手机上占 55%，电脑上最大 400px */
+            height: clamp(320px, 55vh, 420px);
+            /* 绝对居中算法 */
+            left: 50%; top: 50%;
+            transform-origin: center;
+            margin-left: calc(-1 * clamp(220px, 70vw, 300px) / 2);
+            margin-top: calc(-1 * clamp(320px, 55vh, 420px) / 2);
 
-        /* 6. 卡片内部结构 */
-        /* 图片区域 */
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            overflow: hidden; display: flex; flex-direction: column;
+            backface-visibility: hidden; transition: box-shadow 0.3s, border 0.3s;
+        }
+        .card:hover { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); border: 1px solid #ffd700; }
+
+        /* 媒体区域适配 (兼容照片和视频) */
         .card-photo {
             width: 100%; height: 75%;
             background-size: cover; background-position: center;
-            border-bottom: 2px solid #ffd700; /* 金色分割线 */
-            position: relative;
+            border-bottom: 2px solid #ffd700;
+            object-fit: cover; /* 保证视频不变形 */
         }
-        /* 当没有图片时的占位符样式 */
         .card-photo.no-photo {
             background: linear-gradient(135deg, #111 0%, #333 100%);
             display: flex; align-items: center; justify-content: center;
-            color: #555; font-size: 4em;
+            color: #555; font-size: clamp(3em, 10vw, 5em);
         }
 
-        /* 文字信息区域 */
         .card-info {
-            padding: 15px; flex: 1;
-            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 10px 15px; flex: 1;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .artist { font-size: 1.4em; font-weight: bold; color: #fff; margin-bottom: 5px; }
-        .details { font-size: 0.9em; color: #ffd700; opacity: 0.8; }
+        .artist { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .details { font-size: clamp(0.75rem, 3vw, 0.9rem); color: #ffd700; opacity: 0.8; }
         .date { font-family: monospace; }
 
-        /* 7. 导航按钮 */
+        /* 按钮适配 */
         .nav-buttons {
             position: absolute; bottom: 5vh; display: flex; gap: 20px; z-index: 100;
         }
         button {
-            padding: 12px 30px;
-            background: transparent;
-            border: 2px solid #ffd700; border-radius: 30px;
-            color: #ffd700; font-size: 1em; font-weight: bold; cursor: pointer;
-            transition: background 0.3s, color 0.3s;
+            padding: 10px 25px; background: rgba(0,0,0,0.4);
+            border: 1px solid #ffd700; border-radius: 30px;
+            color: #ffd700; font-size: clamp(0.9rem, 3vw, 1rem); font-weight: bold; cursor: pointer;
+            backdrop-filter: blur(5px);
         }
-        button:hover {
-            background: #ffd700; color: #000;
-        }
+        button:active { background: #ffd700; color: #000; }
     </style>
 </head>
 <body>
@@ -112,8 +103,7 @@
 </div>
 
 <div class="container">
-    <div class="carousel" id="carousel">
-        </div>
+    <div class="carousel" id="carousel"></div>
 </div>
 
 <div class="nav-buttons">
@@ -122,9 +112,9 @@
 </div>
 
 <script>
-    // 【关键】这里填入你的所有 14 场演唱会数据
+    // 在这里填入你的图片或视频链接 (注意扩展名 .jpg 或 .mp4)
     const concerts = [
-        { date: '2023.07.08', location: '宜昌', artist: '林志炫', photo: 'phtotos/24cbf8d4c8c60aa6b44a74cb11922911.jpg' }, // photo 填图片路径
+        { date: '2023.07.08', location: '宜昌', artist: '林志炫', photo: '' }, 
         { date: '2024.06.16', location: '青岛', artist: '邓紫棋', photo: '' },
         { date: '2024.09.21', location: '北京', artist: '袁娅维', photo: '' },
         { date: '2024.09.22', location: '北京', artist: '周深', photo: '' },
@@ -143,32 +133,46 @@
     const carousel = document.getElementById('carousel');
     const totalCards = concerts.length;
     let currentAngle = 0;
-    // 【关键】计算旋转半径。卡片越多，轮子越大。
-    const radius = Math.round((280 / 2) / Math.tan(Math.PI / totalCards)) + 150; 
+    let radius = 0;
 
-    // 初始化卡片
+    // 动态计算 3D 旋转半径 (屏幕越窄，半径越小，防止出界)
+    function calcRadius() {
+        // 获取实际设备宽度
+        const screenWidth = window.innerWidth;
+        // 估算当前卡片宽度
+        const cardWidth = screenWidth < 400 ? 220 : Math.min(screenWidth * 0.7, 300);
+        // 手机端让卡片紧凑一点，电脑端拉开距离
+        const padding = screenWidth < 768 ? 60 : 130; 
+        return Math.round((cardWidth / 2) / Math.tan(Math.PI / totalCards)) + padding;
+    }
+
     function init() {
+        carousel.innerHTML = ''; 
+        radius = calcRadius();
+
         concerts.forEach((concert, i) => {
             const card = document.createElement('div');
             card.className = 'card';
-            
-            // 计算每张卡片的基础旋转角度
             const angle = i * (360 / totalCards);
-            // 应用 3D 变换：先旋转，再沿 Z轴 移出 Radius 距离
+            
             card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
 
-            // 构建卡片 HTML
-            let photoHTML = '';
-            if(concert.photo) {
-                // 如果有图片，显示图片
-                photoHTML = `<div class="card-photo" style="background-image: url('${concert.photo}')"></div>`;
+            let mediaHTML = '';
+            // 智能判断图片还是视频
+            if (concert.photo && concert.photo.toLowerCase().endsWith('.mp4')) {
+                // playsinline 确保在苹果手机上不会自动全屏
+                mediaHTML = `
+                    <video class="card-photo" autoplay loop muted playsinline>
+                        <source src="${concert.photo}" type="video/mp4">
+                    </video>`;
+            } else if (concert.photo) {
+                mediaHTML = `<div class="card-photo" style="background-image: url('${concert.photo}')"></div>`;
             } else {
-                // 如果没有图片，显示占位符
-                photoHTML = `<div class="card-photo no-photo">🎵</div>`;
+                mediaHTML = `<div class="card-photo no-photo">🎵</div>`;
             }
 
             card.innerHTML = `
-                ${photoHTML}
+                ${mediaHTML}
                 <div class="card-info">
                     <div class="artist">${concert.artist}</div>
                     <div class="details">
@@ -179,33 +183,31 @@
             `;
             carousel.appendChild(card);
         });
+        applyTransform();
     }
 
-    // 旋转到下一张
-    function nextCard() {
-        currentAngle -= 360 / totalCards;
-        applyTransform();
-    }
-    // 旋转到上一张
-    function prevCard() {
-        currentAngle += 360 / totalCards;
-        applyTransform();
-    }
-    
-    // 应用整体旋转变换
-    function applyTransform() {
-        // 旋转容器本身，所有子卡片就会跟着转
-        carousel.style.transform = `rotateY(${currentAngle}deg)`;
-    }
+    function nextCard() { currentAngle -= 360 / totalCards; applyTransform(); }
+    function prevCard() { currentAngle += 360 / totalCards; applyTransform(); }
+    function applyTransform() { carousel.style.transform = `rotateY(${currentAngle}deg)`; }
+
+    // 监听屏幕旋转或窗口缩放，重新计算布局
+    window.addEventListener('resize', () => {
+        radius = calcRadius();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, i) => {
+            const angle = i * (360 / totalCards);
+            card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+        });
+    });
 
     init();
     
-    // 手机端左右划动支持
+    // 手机端左右滑屏支持
     let startX = 0;
     window.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
     window.addEventListener('touchend', (e) => {
         const endX = e.changedTouches[0].clientX;
-        if(Math.abs(startX - endX) < 50) return; // 滑动距离太短不触发
+        if(Math.abs(startX - endX) < 40) return; 
         if(endX < startX) nextCard();
         else prevCard();
     });
