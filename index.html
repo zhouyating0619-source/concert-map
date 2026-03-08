@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的演唱会回忆录</title>
+    <title>ZOYA's Concert Memories</title>
     <style>
         /* ===== 1. 未来科技基础设置 ===== */
         body {
@@ -13,7 +13,7 @@
             color: #dcdcdc; overflow: hidden; height: 100vh;
         }
 
-        /* ===== 2. 全局导航栏 (全息风格) ===== */
+        /* ===== 2. 全局导航栏 (全息品牌风格) ===== */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(10px);
@@ -21,7 +21,17 @@
             display: flex; justify-content: space-between; align-items: center;
             z-index: 1000; padding: 0 20px; box-sizing: border-box;
         }
-        .nav-links { display: flex; gap: 20px; }
+        
+        /* 左侧：专属发光大写 LOGO */
+        .nav-brand {
+            font-size: 1.5rem; font-weight: 900; color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+            letter-spacing: 2px; font-style: italic; cursor: pointer;
+        }
+        
+        /* 右侧：导航链接与音乐按钮组合 */
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; gap: 15px; }
         .nav-link {
             font-size: 0.95rem; font-weight: 600; color: rgba(0,255,255,0.5); cursor: pointer;
             transition: color 0.3s;
@@ -41,30 +51,25 @@
 
         /* ===== 3. 公共视图样式 ===== */
         .view-layer {
-            position: absolute; top: 60px; /* 避开导航栏高度 */
-            left: 0; width: 100vw; height: calc(100vh - 60px);
+            position: absolute; top: 60px; bottom: 30px; /* 避开导航栏和底部版权高度 */
+            left: 0; width: 100vw; height: calc(100vh - 90px);
             transition: opacity 0.5s ease, transform 0.5s ease;
             display: none; opacity: 0; overflow-y: auto; overflow-x: hidden;
         }
         .view-layer.active { display: block; opacity: 1; transform: translateY(0); }
 
         /* ===== 4. 首页 (Future Home) ===== */
-        /* 修复了居中导致的顶部裁切问题，改为 flex-start 并增加顶部内边距 */
         #home-view { 
             display: flex; flex-direction: column; align-items: center; 
-            justify-content: flex-start; padding-top: 6vh; padding-bottom: 40px;
+            justify-content: flex-start; padding-top: 4vh; padding-bottom: 40px;
             transform: translateY(20px); 
         }
         
-        /* 创作者署名面板 */
         .home-profile { 
             background: transparent; padding: 20px 30px; border-radius: 20px; 
             border: 1px solid rgba(0,255,255,0.2);
             box-shadow: 0 10px 30px rgba(0,255,255,0.05); text-align: center; margin-bottom: 20px;
         }
-        .home-num { font-size: 2rem; font-weight: 800; color: #262626; }
-        .home-label { font-size: 0.8rem; color: #8e8e8e; margin-top: 5px; }
-
         .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 10px;}
         .hero-subtitle { font-size: 1rem; color: #8e8e8e; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
         
@@ -81,7 +86,7 @@
         .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 255, 255, 0.4); }
 
         /* ===== 5. 光芒轨迹 (Timeline) ===== */
-        .timeline-header { text-align: center; padding: 40px 20px 10px; }
+        .timeline-header { text-align: center; padding: 20px 20px 10px; }
         .timeline-header h1 { margin: 0; font-size: 2rem; font-weight: 800; color: rgba(0,255,255,1); }
         .timeline-container { position: relative; max-width: 600px; margin: 20px auto 50px; padding: 0 20px; }
         .timeline-container::after { content: ''; position: absolute; width: 2px; background: rgba(0,255,255,0.2); top: 0; bottom: 0; left: 40px; }
@@ -100,7 +105,7 @@
         .timeline-location { color: #a8a8a8; font-size: 0.85rem; margin-top: 6px; }
 
         /* 全息地图插画插件 */
-        .map-inset { position: absolute; right: -250px; top: 0; width: 200px; height: 150px; }
+        .map-inset { position: absolute; right: -250px; top: 0; width: 200px; height: 150px; opacity: 0.5; }
         #china-map { width: 100%; height: 100%; }
         #china-map .land { fill: none; stroke: rgba(0,255,255,0.2); stroke-width: 1.5; }
         #china-map .city-point { fill: rgba(220, 39, 67, 1); stroke: #000; stroke-width: 1; }
@@ -108,42 +113,63 @@
         /* ===== 6. 3D 舞台 (Holographic Gallery) ===== */
         #carousel-view { display: none; overflow: hidden; } 
         .back-btn {
-            position: absolute; top: 20px; left: 20px; z-index: 200;
-            padding: 10px 20px; background: rgba(5, 5, 5, 0.8);
+            position: absolute; top: 10px; left: 20px; z-index: 200;
+            padding: 8px 16px; background: rgba(5, 5, 5, 0.8);
             border: 1px solid rgba(0,255,255,0.5); border-radius: 30px; color: rgba(0,255,255,1);
-            font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,255,255,0.1);
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,255,255,0.1);
         }
-        .container { width: 100%; height: 60vh; margin-top: 5vh; perspective: 1500px; display: flex; align-items: center; justify-content: center; }
+        .container { width: 100%; height: 55vh; margin-top: 5vh; perspective: 1500px; display: flex; align-items: center; justify-content: center; }
         .carousel { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
         
         .card {
-            position: absolute; width: clamp(240px, 70vw, 320px); height: clamp(340px, 55vh, 440px);
+            position: absolute; width: clamp(220px, 65vw, 300px); height: clamp(320px, 50vh, 420px);
             left: 50%; top: 50%; transform-origin: center;
-            margin-left: calc(-1 * clamp(240px, 70vw, 320px) / 2); margin-top: calc(-1 * clamp(340px, 55vh, 440px) / 2);
+            margin-left: calc(-1 * clamp(220px, 65vw, 300px) / 2); margin-top: calc(-1 * clamp(320px, 50vh, 420px) / 2);
             background: #000; border: 1px solid rgba(0,255,255,0.2); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,255,255,0.1);
             display: flex; flex-direction: column; padding: 12px; box-sizing: border-box; backface-visibility: hidden;
         }
         .card-photo { width: 100%; height: 70%; background-size: cover; background-position: center; border-radius: 12px; background-color: #050505; }
         .card-photo.no-photo { display: flex; align-items: center; justify-content: center; color: rgba(0,255,255,0.2); font-size: 3em; }
-        .card-info { padding: 15px 5px 5px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;}
-        .artist { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: rgba(0,255,255,1); }
-        .details { font-size: 0.85rem; color: #8e8e8e; }
+        .card-info { padding: 10px 5px 5px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;}
+        .artist { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; color: rgba(0,255,255,1); }
+        .details { font-size: 0.8rem; color: #8e8e8e; }
 
-        .nav-buttons { position: absolute; bottom: 8vh; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; }
-        .nav-buttons button { width: 50px; height: 50px; border-radius: 50%; background: rgba(5,5,5,0.9); border: 1px solid rgba(0,255,255,0.2); font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,255,0.1); color: rgba(0,255,255,1); }
+        .nav-buttons { position: absolute; bottom: 5vh; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; }
+        .nav-buttons button { width: 45px; height: 45px; border-radius: 50%; background: rgba(5,5,5,0.9); border: 1px solid rgba(0,255,255,0.2); font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,255,0.1); color: rgba(0,255,255,1); }
 
         /* ===== 7. 关于热爱 (About View) ===== */
         #about-view { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        
         .about-profile { background: rgba(255,255,255,0.05); padding: 20px 30px; border-radius: 20px; border: 1px solid rgba(220, 39, 67, 0.3); text-align: center; margin-bottom: 30px; }
         .about-quote { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 600; line-height: 1.6; color: #dcdcdc; max-width: 600px; margin-bottom: 30px; position: relative;}
         .about-quote::before { content: '“'; font-size: 4rem; color: rgba(0,255,255,0.2); position: absolute; top: -20px; left: -20px; z-index: -1;}
         .about-text { color: #8e8e8e; font-size: 0.95rem; line-height: 1.8; max-width: 500px; }
 
+        /* ===== 8. 底部专属版权声明 ===== */
+        .site-footer {
+            position: fixed; bottom: 8px; width: 100%; text-align: center;
+            font-size: 0.7rem; color: rgba(220, 220, 220, 0.3); /* 温和低调的灰白色 */
+            z-index: 10; pointer-events: none; /* 不会遮挡点击 */
+            letter-spacing: 1px; font-weight: 300;
+        }
+
         /* 极简滚动条 */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.2); border-radius: 4px; }
+
+        /* 移动端适配调整 */
+        @media (max-width: 600px) {
+            .navbar { padding: 0 15px; }
+            .nav-brand { font-size: 1.2rem; }
+            .nav-link { font-size: 0.85rem; }
+            .nav-links { gap: 10px; }
+            .nav-right { gap: 10px; }
+            .music-btn { width: 30px; height: 30px; font-size: 0.9rem;}
+            .stats-container { gap: 15px; }
+            .stat-box { padding: 15px 20px; }
+            .stat-num { font-size: 1.5rem; }
+            .site-footer { font-size: 0.6rem; transform: scale(0.9); }
+        }
     </style>
 </head>
 <body>
@@ -151,21 +177,25 @@
 <audio id="bgm" src="music/这样很好.mp3" loop preload="auto"></audio>
 
 <nav class="navbar">
-    <div class="nav-links">
-        <div class="nav-link active" onclick="switchView('home-view', this)">首页</div>
-        <div class="nav-link" onclick="switchView('timeline-view', this)">光芒轨迹</div>
-        <div class="nav-link" onclick="switchView('about-view', this)">关于热爱</div>
+    <div class="nav-brand" onclick="switchView('home-view')">ZOYA</div>
+    
+    <div class="nav-right">
+        <div class="nav-links">
+            <div class="nav-link active" onclick="switchView('home-view', this)">首页</div>
+            <div class="nav-link" onclick="switchView('timeline-view', this)">光芒轨迹</div>
+            <div class="nav-link" onclick="switchView('about-view', this)">关于热爱</div>
+        </div>
+        <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="播放/暂停音乐">🎵</div>
     </div>
-    <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="INITIATE/PAUSE BGM">🎵</div>
 </nav>
 
 <div id="home-view" class="view-layer active" style="display: flex;">
     
     <div class="home-profile" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-        <img src="phtotos/me.jpg" alt="Creator" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid rgba(0,255,255,0.8); object-fit: cover; box-shadow: 0 0 20px rgba(0,255,255,0.4);">
+        <img src="phtotos/me.jpg" alt="Zoya" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid rgba(0,255,255,0.8); object-fit: cover; box-shadow: 0 0 20px rgba(0,255,255,0.4);">
         <div>
-            <div class="stat-num" style="font-size: 1.5rem; color: rgba(0,255,255,1);">ZHOU YATING</div>
-            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">CREATOR / MATRIX OWNER</div>
+            <div class="stat-num" style="font-size: 1.5rem; color: rgba(0,255,255,1);">ZOYA</div>
+            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">MATRIX OWNER</div>
         </div>
     </div>
 
@@ -220,10 +250,10 @@
 <div id="about-view" class="view-layer">
     
     <div class="about-profile" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-        <img src="phtotos/me.jpg" alt="Creator" style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(220, 39, 67, 0.8); object-fit: cover; box-shadow: 0 0 25px rgba(220, 39, 67, 0.5);">
+        <img src="phtotos/me.jpg" alt="Zoya" style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(220, 39, 67, 0.8); object-fit: cover; box-shadow: 0 0 25px rgba(220, 39, 67, 0.5);">
         <div>
-            <div class="stat-num" style="font-size: 1.8rem; color: #fff;">ZHOU YATING</div>
-            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">MATRIX CREATOR / SYSTEM OWNER</div>
+            <div class="stat-num" style="font-size: 1.8rem; color: #fff;">ZOYA</div>
+            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">SYSTEM OWNER</div>
         </div>
     </div>
 
@@ -235,6 +265,10 @@
         <p>每一张门票，每一次大合唱，每一个在台下落泪或欢呼的瞬间，都是时光里闪闪发光的星星。</p>
         <p>未完待续...</p>
     </div>
+</div>
+
+<div class="site-footer">
+    © Zoya's Concert Memories. 记录关于热爱的每一个瞬间.
 </div>
 
 <script>
@@ -259,6 +293,10 @@
         if(navElement) {
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             navElement.classList.add('active');
+        } else if (viewId === 'home-view') {
+            // 点击 Logo 回到首页时，也高亮首页文字
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.querySelector('.nav-link').classList.add('active');
         }
 
         document.querySelectorAll('.view-layer').forEach(view => {
@@ -335,8 +373,8 @@
 
     function calcRadius() {
         const screenWidth = window.innerWidth;
-        const cardWidth = screenWidth < 400 ? 240 : Math.min(screenWidth * 0.7, 320);
-        const padding = screenWidth < 768 ? 50 : 120; 
+        const cardWidth = screenWidth < 400 ? 220 : Math.min(screenWidth * 0.65, 300);
+        const padding = screenWidth < 768 ? 40 : 100; 
         return Math.round((cardWidth / 2) / Math.tan(Math.PI / totalCards)) + padding;
     }
 
