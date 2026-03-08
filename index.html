@@ -8,156 +8,117 @@
         /* ===== 1. 基础极简风设置 ===== */
         body {
             margin: 0; padding: 0;
-            /* 干净的微渐变浅色背景 */
             background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            /* 苹果风默认字体库，看着更现代 */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #262626; /* Ins 标准深灰色 */
-            overflow: hidden; 
+            color: #262626; overflow: hidden; height: 100vh;
         }
 
-        /* ===== 2. 公共视图样式 ===== */
+        /* ===== 2. 全局导航栏 (高斯模糊) ===== */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; padding: 0 20px; box-sizing: border-box;
+        }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-link {
+            font-size: 0.95rem; font-weight: 600; color: #8e8e8e; cursor: pointer;
+            transition: color 0.3s;
+        }
+        .nav-link.active { color: #262626; border-bottom: 2px solid #262626; padding-bottom: 2px; }
+        .nav-link:hover { color: #262626; }
+        
+        /* 音乐播放按钮 */
+        .music-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #fff; border: 1px solid #eaeaea; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-size: 1.1rem; transition: transform 0.3s;
+        }
+        /* 播放时的旋转动画 */
+        .music-btn.playing { animation: spin 4s linear infinite; border-color: #262626; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* ===== 3. 公共视图样式 ===== */
         .view-layer {
-            position: absolute; top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            position: absolute; top: 60px; /* 避开导航栏高度 */
+            left: 0; width: 100vw; height: calc(100vh - 60px);
             transition: opacity 0.5s ease, transform 0.5s ease;
+            display: none; opacity: 0; overflow-y: auto; overflow-x: hidden;
         }
+        .view-layer.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* ===== 3. 第一层：时间轴视图 ===== */
-        #timeline-view {
-            overflow-y: auto; overflow-x: hidden;
-            display: block; padding-bottom: 50px;
-        }
-
-        .timeline-header {
-            text-align: center; padding: 50px 20px 20px;
-            position: relative; z-index: 10;
-        }
-        h1 {
-            margin: 0; font-size: clamp(1.8rem, 6vw, 2.2rem);
-            font-weight: 800; letter-spacing: 1px; color: #262626;
-        }
-        .subtitle { 
-            color: #8e8e8e; margin-top: 8px; font-size: clamp(0.8rem, 3vw, 0.9rem); 
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-
-        .timeline-container {
-            position: relative; max-width: 600px; margin: 30px auto; padding: 0 20px;
-        }
+        /* ===== 4. 首页 (Home View) ===== */
+        #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(20px); }
+        .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 10px;}
+        .hero-subtitle { font-size: 1rem; color: #8e8e8e; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
         
-        /* 时间轴主线 - 浅灰色 */
-        .timeline-container::after {
-            content: ''; position: absolute;
-            width: 2px; background: #e0e0e0;
-            top: 0; bottom: 0; left: 40px;
-        }
+        .stats-container { display: flex; gap: 30px; margin-bottom: 50px; text-align: center; }
+        .stat-box { background: #fff; padding: 20px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .stat-num { font-size: 2rem; font-weight: 800; color: #262626; }
+        .stat-label { font-size: 0.8rem; color: #8e8e8e; margin-top: 5px; }
 
-        .timeline-item {
-            position: relative; margin: 35px 0; padding-left: 60px;
-            cursor: pointer; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        .start-btn {
+            padding: 15px 40px; background: #262626; color: #fff; border: none;
+            border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(38, 38, 38, 0.3); transition: transform 0.2s, box-shadow 0.2s;
         }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(38, 38, 38, 0.4); }
+
+        /* ===== 5. 时间轴视图 (Timeline View) ===== */
+        .timeline-header { text-align: center; padding: 40px 20px 10px; }
+        .timeline-header h1 { margin: 0; font-size: 2rem; font-weight: 800; }
+        .timeline-container { position: relative; max-width: 600px; margin: 20px auto 50px; padding: 0 20px; }
+        .timeline-container::after { content: ''; position: absolute; width: 2px; background: #e0e0e0; top: 0; bottom: 0; left: 40px; }
+        
+        .timeline-item { position: relative; margin: 35px 0; padding-left: 60px; cursor: pointer; transition: transform 0.3s; }
         .timeline-item:hover { transform: translateY(-5px); }
-        
-        /* Ins 风晚霞渐变发光点 */
         .timeline-item::before {
-            content: ''; position: absolute;
-            width: 14px; height: 14px; 
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            border: 3px solid #fff; /* 白边 */
-            border-radius: 50%; left: 31px; top: 15px;
-            box-shadow: 0 2px 8px rgba(220, 39, 67, 0.3);
-            z-index: 1; transition: transform 0.3s;
+            content: ''; position: absolute; width: 14px; height: 14px; 
+            background: linear-gradient(45deg, #f09433 0%, #dc2743 50%, #bc1888 100%);
+            border: 3px solid #fff; border-radius: 50%; left: 31px; top: 15px;
+            box-shadow: 0 2px 8px rgba(220, 39, 67, 0.3); z-index: 1;
         }
-        .timeline-item:hover::before { transform: scale(1.2); }
-
-        /* 干净的白色卡片 */
-        .timeline-content {
-            background: #ffffff;
-            border-radius: 16px; padding: 18px 20px;
-            box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); /* 轻柔弥散阴影 */
-            transition: box-shadow 0.3s;
-        }
-        .timeline-item:hover .timeline-content {
-            box-shadow: 0 15px 35px rgba(149, 157, 165, 0.2);
-        }
+        .timeline-content { background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
         .timeline-date { color: #8e8e8e; font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; }
-        .timeline-artist { font-size: 1.3rem; font-weight: bold; color: #262626; }
-        .timeline-location { color: #a8a8a8; font-size: 0.85rem; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+        .timeline-artist { font-size: 1.3rem; font-weight: bold; }
+        .timeline-location { color: #a8a8a8; font-size: 0.85rem; margin-top: 6px; }
 
-        /* ===== 4. 第二层：3D 旋转视图 ===== */
-        #carousel-view {
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transform: scale(0.95);
-        }
-
-        /* 极简返回按钮 */
+        /* ===== 6. 3D 旋转舞台 (Carousel View) ===== */
+        #carousel-view { display: none; overflow: hidden; } /* 覆盖上面的 block 设为 flex 由 JS 控制 */
         .back-btn {
             position: absolute; top: 20px; left: 20px; z-index: 200;
             padding: 10px 20px; background: rgba(255, 255, 255, 0.8);
             border: 1px solid #eaeaea; border-radius: 30px; color: #262626;
-            font-size: 0.9rem; font-weight: 600; cursor: pointer;
-            backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: background 0.2s;
+            font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .back-btn:active { background: #f0f0f0; }
-
-        .carousel-header { position: absolute; top: 6vh; text-align: center; z-index: 100; width: 100%; pointer-events: none; }
-        .carousel-header h1 { font-size: 1.8rem; }
+        .container { width: 100%; height: 60vh; margin-top: 5vh; perspective: 1500px; display: flex; align-items: center; justify-content: center; }
+        .carousel { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
         
-        .container {
-            width: 100%; height: 60vh; margin-top: 5vh;
-            perspective: 1500px; display: flex; align-items: center; justify-content: center;
-        }
-
-        .carousel {
-            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        /* 拍立得风格 3D 卡片 */
         .card {
-            position: absolute;
-            width: clamp(240px, 70vw, 320px); height: clamp(340px, 55vh, 440px);
+            position: absolute; width: clamp(240px, 70vw, 320px); height: clamp(340px, 55vh, 440px);
             left: 50%; top: 50%; transform-origin: center;
-            margin-left: calc(-1 * clamp(240px, 70vw, 320px) / 2);
-            margin-top: calc(-1 * clamp(340px, 55vh, 440px) / 2);
-            
-            background: #ffffff; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); /* 高级悬浮阴影 */
-            display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;
-            backface-visibility: hidden; transition: transform 0.3s;
+            margin-left: calc(-1 * clamp(240px, 70vw, 320px) / 2); margin-top: calc(-1 * clamp(340px, 55vh, 440px) / 2);
+            background: #ffffff; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; padding: 12px; box-sizing: border-box; backface-visibility: hidden;
         }
-
-        /* 内部照片区域 */
-        .card-photo {
-            width: 100%; height: 70%; 
-            background-size: cover; background-position: center;
-            border-radius: 12px; /* 照片圆角 */
-            object-fit: cover;
-            background-color: #f8f9fa; /* 没加载出来时的浅灰底色 */
-        }
-        .card-photo.no-photo {
-            display: flex; align-items: center; justify-content: center; 
-            color: #dcdcdc; font-size: clamp(3em, 10vw, 4em);
-        }
-
+        .card-photo { width: 100%; height: 70%; background-size: cover; background-position: center; border-radius: 12px; background-color: #f8f9fa; }
+        .card-photo.no-photo { display: flex; align-items: center; justify-content: center; color: #dcdcdc; font-size: 3em; }
         .card-info { padding: 15px 5px 5px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;}
-        .artist { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 800; color: #262626; margin-bottom: 6px; }
-        .details { font-size: clamp(0.8rem, 3vw, 0.9rem); color: #8e8e8e; font-weight: 500; }
+        .artist { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+        .details { font-size: 0.85rem; color: #8e8e8e; }
 
-        /* 底部控制按钮 */
-        .nav-buttons { position: absolute; bottom: 8vh; display: flex; gap: 20px; z-index: 100; }
-        .nav-buttons button {
-            width: 50px; height: 50px; border-radius: 50%; /* 圆形按钮 */
-            background: rgba(255,255,255,0.9); border: 1px solid #eaeaea;
-            color: #262626; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .nav-buttons button:active { background: #f0f0f0; transform: scale(0.95); }
-        
-        /* 滚动条极简处理 */
+        .nav-buttons { position: absolute; bottom: 8vh; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; }
+        .nav-buttons button { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid #eaeaea; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        /* ===== 7. 关于页面 (About View) ===== */
+        #about-view { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .about-quote { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 600; line-height: 1.6; color: #262626; max-width: 600px; margin-bottom: 30px; position: relative;}
+        .about-quote::before { content: '“'; font-size: 4rem; color: #e0e0e0; position: absolute; top: -20px; left: -20px; z-index: -1;}
+        .about-text { color: #8e8e8e; font-size: 0.95rem; line-height: 1.8; max-width: 500px; }
+
+        /* 极简滚动条 */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #dcdcdc; border-radius: 4px; }
@@ -165,19 +126,48 @@
 </head>
 <body>
 
+<audio id="bgm" src="music/这样很好.mp3" loop preload="auto"></audio>
+
+<nav class="navbar">
+    <div class="nav-links">
+        <div class="nav-link active" onclick="switchView('home-view', this)">首 页</div>
+        <div class="nav-link" onclick="switchView('timeline-view', this)">光芒轨迹</div>
+        <div class="nav-link" onclick="switchView('about-view', this)">关于热爱</div>
+    </div>
+    <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="播放/暂停音乐">🎵</div>
+</nav>
+
+<div id="home-view" class="view-layer active" style="display: flex;">
+    <div class="hero-title">Concert<br>Memories</div>
+    <div class="hero-subtitle">My Live Music Journey</div>
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-num">14</div>
+            <div class="stat-label">场次点亮</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">3</div>
+            <div class="stat-label">跨越城市</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">12</div>
+            <div class="stat-label">见证歌手</div>
+        </div>
+    </div>
+
+    <button class="start-btn" onclick="startJourney()">开启时光机</button>
+</div>
+
 <div id="timeline-view" class="view-layer">
     <div class="timeline-header">
-        <h1>Concert Memories</h1>
-        <p class="subtitle">2023 - 2025 · 14 Moments</p>
+        <h1>轨迹</h1>
     </div>
     <div class="timeline-container" id="timeline-container"></div>
 </div>
 
-<div id="carousel-view" class="view-layer">
-    <button class="back-btn" onclick="showTimeline()">← Back</button>
-    <div class="carousel-header">
-        <h1>Gallery</h1>
-    </div>
+<div id="carousel-view" class="view-layer" style="display: none;">
+    <button class="back-btn" onclick="backToTimeline()">← 返回轨迹</button>
     <div class="container">
         <div class="carousel" id="carousel"></div>
     </div>
@@ -187,8 +177,78 @@
     </div>
 </div>
 
+<div id="about-view" class="view-layer">
+    <div class="about-quote">
+        耳机里的声音<br>终有一天要站在台上听
+    </div>
+    <div class="about-text">
+        <p>这里记录了我从 2023 年开始的每一场音乐相遇。</p>
+        <p>每一张门票，每一次大合唱，每一个在台下落泪或欢呼的瞬间，都是时光里闪闪发光的星星。</p>
+        <p>未完待续...</p>
+    </div>
+</div>
+
 <script>
-    // 你的数据完全没有变！
+    // --- 音乐控制逻辑 ---
+    const bgm = document.getElementById('bgm');
+    const musicBtn = document.getElementById('music-btn');
+    let isPlaying = false;
+
+    function toggleMusic() {
+        if (isPlaying) {
+            bgm.pause();
+            musicBtn.classList.remove('playing');
+        } else {
+            bgm.play();
+            musicBtn.classList.add('playing');
+        }
+        isPlaying = !isPlaying;
+    }
+
+    // --- 页面导航切换逻辑 ---
+    function switchView(viewId, navElement) {
+        // 更新导航栏下划线
+        if(navElement) {
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            navElement.classList.add('active');
+        }
+
+        // 隐藏所有视图
+        document.querySelectorAll('.view-layer').forEach(view => {
+            view.style.opacity = '0';
+            view.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                view.style.display = 'none';
+                view.classList.remove('active');
+            }, 300); // 等待淡出动画
+        });
+
+        // 显示目标视图
+        setTimeout(() => {
+            const targetView = document.getElementById(viewId);
+            // 3D 舞台使用 flex，其他使用 block 或 首页的 flex
+            targetView.style.display = (viewId === 'home-view' || viewId === 'about-view') ? 'flex' : 'block';
+            targetView.classList.add('active');
+            
+            // 触发回弹动画
+            setTimeout(() => {
+                targetView.style.opacity = '1';
+                targetView.style.transform = 'translateY(0)';
+            }, 50);
+        }, 300);
+    }
+
+    // 从首页点击“开启时光机”
+    function startJourney() {
+        // 如果音乐没播放，自动尝试播放 BGM（带来惊喜感！）
+        if(!isPlaying) toggleMusic(); 
+        
+        // 切换到时间轴，并高亮导航栏
+        const timelineNav = document.querySelectorAll('.nav-link')[1];
+        switchView('timeline-view', timelineNav);
+    }
+
+    // --- 数据与核心逻辑 ---
     const concerts = [
         { date: '2023.07.08', location: '宜昌', artist: '林志炫', photo: 'phtotos/Terrylin.jpg' }, 
         { date: '2024.06.16', location: '青岛', artist: '邓紫棋', photo: 'phtotos/GEM.jpg' },
@@ -270,6 +330,7 @@
         applyTransform();
     }
 
+    // 从时间轴进入 3D 舞台
     function showCarousel(targetIndex) {
         timelineView.style.opacity = '0';
         setTimeout(() => {
@@ -284,9 +345,9 @@
         }, 300);
     }
 
-    function showTimeline() {
+    // 从 3D 舞台退回时间轴
+    function backToTimeline() {
         carouselView.style.opacity = '0';
-        carouselView.style.transform = 'scale(0.95)';
         setTimeout(() => {
             carouselView.style.display = 'none';
             timelineView.style.display = 'block';
@@ -319,6 +380,7 @@
         else prevCard();
     });
 
+    // 初始化渲染
     initTimeline();
     initCarousel();
 </script>
