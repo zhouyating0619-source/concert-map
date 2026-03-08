@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的演唱会足迹地图</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #1a1a1a; color: #fff; font-family: sans-serif; }
+        #main { width: 100vw; height: 100vh; }
+        .title { position: absolute; top: 20px; left: 20px; z-index: 10; }
+        h1 { margin: 0; font-size: 24px; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    </style>
+</head>
+<body>
+
+<div class="title">
+    <h1>我的演唱会足迹</h1>
+    <p>2023 - 2025 · 已点亮 3 个城市 · 14 场演出</p>
+</div>
+<div id="main"></div>
+
+<script>
+    const chart = echarts.init(document.getElementById('main'));
+
+    // 1. 定义坐标数据 (经纬度)
+    const geoCoordMap = {
+        '北京': [116.405285, 39.904989],
+        '宜昌': [111.290843, 30.702636],
+        '青岛': [120.38264, 36.067082]
+    };
+
+    // 2. 整理你的演唱会详细数据
+    const concertData = [
+        { name: '宜昌', value: [
+            { date: '2023.07.08', artist: '林志炫' }
+        ]},
+        { name: '青岛', value: [
+            { date: '2024.06.16', artist: '邓紫棋' }
+        ]},
+        { name: '北京', value: [
+            { date: '2024.09.21', artist: '袁娅维' },
+            { date: '2024.09.22', artist: '周深' },
+            { date: '2024.10.05', artist: '国潮星动' },
+            { date: '2025.03.23', artist: '汪苏泷' },
+            { date: '2025.03.30', artist: '林志炫' },
+            { date: '2025.04.18', artist: '张杰' },
+            { date: '2025.04.20', artist: '李健' },
+            { date: '2025.06.01', artist: '凤凰传奇' },
+            { date: '2025.07.27', artist: '五月天' },
+            { date: '2025.08.15', artist: '王心凌' },
+            { date: '2025.09.20', artist: '刘雨昕' },
+            { date: '2025.09.27', artist: '胡夏' }
+        ]}
+    ];
+
+    // 格式化为 ECharts 需要的格式
+    const convertData = function (data) {
+        return data.map(item => ({
+            name: item.name,
+            value: geoCoordMap[item.name].concat(item.value.length), // [经, 纬, 场数]
+            details: item.value
+        }));
+    };
+
+    // 获取中国地图并初始化
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+    .then(response => response.json())
+    .then(chinaJson => {
+        echarts.registerMap('china', chinaJson);
+
+        const option = {
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                borderColor: '#ffd700',
+                textStyle: { color: '#fff' },
+                formatter: function (params) {
+                    let res = `<b style="color:#ffd700;font-size:16px;">${params.name}</b><br/>`;
+                    params.data.details.forEach(it => {
+                        res += `${it.date} - ${it.artist}<br/>`;
+                    });
+                    return res;
+                }
+            },
+            geo: {
+                map: 'china',
+                roam: true,
+                emphasis: { itemStyle: { areaColor: '#2a333d' } },
+                itemStyle: {
+                    areaColor: '#323c48',
+                    borderColor: '#111'
+                }
+            },
+            series: [{
+                name: '演唱会',
+                type: 'effectScatter', // 带有涟漪动效
+                coordinateSystem: 'geo',
+                data: convertData(concertData),
+                symbolSize: function (val) {
+                    return Math.max(val[2] * 5, 12); // 根据场次决定圆圈大小，最小12
+                },
+                showEffectOn: 'render',
+                rippleEffect: { brushType: 'stroke', scale: 4 },
+                label: {
+                    show: true,
+                    formatter: '{b}',
+                    position: 'right',
+                    color: '#fff'
+                },
+                itemStyle: {
+                    color: '#ffd700', // 荧光金色
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            }]
+        };
+
+        chart.setOption(option);
+    });
+
+    window.onresize = () => chart.resize();
+</script>
+</body>
+</html>
