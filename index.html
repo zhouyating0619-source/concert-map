@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zoya's Musical Archive</title>
     <style>
-        /* ===== 1. 老钱风基础设置 ===== */
+        /* ===== 1. 基础设置 ===== */
         :root {
             --bg-color: #161412;
             --surface-color: #23201d;
@@ -17,65 +17,48 @@
             --font-serif: "Georgia", "Times New Roman", "STZhongsong", serif;
             --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
-
         body { margin: 0; padding: 0; background: var(--bg-color); font-family: var(--font-sans); color: var(--text-main); overflow: hidden; height: 100vh; }
 
-        /* ===== 2. 优雅导航栏 ===== */
-        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: rgba(22, 20, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: var(--border-gold); display: flex; justify-content: space-between; align-items: center; z-index: 1000; padding: 0 40px; box-sizing: border-box; }
-        .nav-brand { font-family: var(--font-serif); font-size: 1.8rem; font-weight: normal; color: var(--gold-light); letter-spacing: 4px; cursor: pointer; text-transform: uppercase; }
+        /* ===== 2. 导航栏 & 播放器 ===== */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: rgba(22, 20, 18, 0.85); backdrop-filter: blur(12px); border-bottom: var(--border-gold); display: flex; justify-content: space-between; align-items: center; z-index: 1000; padding: 0 40px; box-sizing: border-box; }
+        .nav-brand { font-family: var(--font-serif); font-size: 1.8rem; color: var(--gold-light); letter-spacing: 4px; cursor: pointer; text-transform: uppercase; }
         .nav-right { display: flex; align-items: center; gap: 30px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-link { font-size: 0.9rem; letter-spacing: 2px; color: var(--text-muted); cursor: pointer; transition: color 0.4s; text-transform: uppercase; }
         .nav-link.active { color: var(--gold-light); border-bottom: 1px solid var(--gold-light); padding-bottom: 4px; }
-        .nav-link:hover { color: var(--text-main); }
         
-        .music-btn { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dark), var(--gold-light)); display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2rem; color: #161412; transition: transform 0.4s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid #161412; }
+        .music-btn { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dark), var(--gold-light)); display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2rem; color: #161412; transition: transform 0.4s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .music-btn.playing { animation: spin 4s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ===== 2.1 迷你黑胶面板 ===== */
-        .music-panel {
-            position: fixed; top: 85px; right: 40px; width: 280px;
-            background: var(--surface-color); border: var(--border-gold); border-radius: 8px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 999;
-            display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
-            transform: translateY(-10px); opacity: 0; pointer-events: none; transition: all 0.4s ease;
-        }
-        .music-panel.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
-        .player-header { font-family: var(--font-serif); font-size: 0.8rem; color: var(--gold-dark); letter-spacing: 2px; margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(182, 141, 64, 0.2); padding-bottom: 10px;}
-        .current-track-name { font-family: var(--font-serif); font-size: 1.1rem; color: var(--gold-light); text-align: center; margin-bottom: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; }
-        .player-controls { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
-        .player-controls button { background: transparent; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer; transition: color 0.3s; }
-        .player-controls button:hover { color: var(--gold-light); }
-        .playlist-container { max-height: 140px; overflow-y: auto; }
-        .playlist-item { font-size: 0.85rem; color: var(--text-muted); padding: 10px 5px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.3s; }
-        .playlist-item:hover { color: var(--text-main); padding-left: 10px; }
-        .playlist-item.active { color: var(--gold-light); font-style: italic; }
-
-        /* ===== 3. 公共视图样式 ===== */
+        /* ===== 3. 公共视图 ===== */
         .view-layer { position: absolute; top: 70px; bottom: 0; left: 0; width: 100vw; height: calc(100vh - 70px); transition: opacity 0.6s ease, transform 0.6s ease; display: none; opacity: 0; overflow-y: auto; overflow-x: hidden; }
         .view-layer.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* ===== 4. 首页 ===== */
+        /* ===== 4. 首页 (精简版CSS, 保持不变) ===== */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 50px; }
-        .home-profile { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-bottom: 30px; }
-        .home-profile img { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold-dark); object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.6); padding: 5px; background: var(--bg-color); }
-        .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5rem); color: var(--gold-light); text-align: center; margin-bottom: 15px; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .home-profile img { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold-dark); object-fit: cover; }
+        .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5rem); color: var(--gold-light); text-align: center; margin-bottom: 15px; }
         .hero-subtitle { font-size: 1rem; color: var(--text-muted); letter-spacing: 6px; text-transform: uppercase; margin-bottom: 50px; }
-        .stats-container { display: flex; gap: 40px; margin-bottom: 50px; text-align: center; flex-wrap: wrap; justify-content: center; border-top: var(--border-gold); border-bottom: var(--border-gold); padding: 25px 0; width: 80%; max-width: 800px;}
+        .stats-container { display: flex; gap: 40px; margin-bottom: 50px; text-align: center; justify-content: center; border-top: var(--border-gold); border-bottom: var(--border-gold); padding: 25px 0; width: 80%; max-width: 800px;}
         .stat-box { padding: 0 30px; border-right: 1px solid rgba(182, 141, 64, 0.2); }
         .stat-box:last-child { border-right: none; }
-        .stat-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--gold-light); margin-bottom: 5px;}
+        .stat-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--gold-light); }
         .stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
-        .start-btn { padding: 18px 45px; background: transparent; color: var(--gold-light); border: 1px solid var(--gold-dark); font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 3px; cursor: pointer; transition: all 0.4s; text-transform: uppercase; }
+        .start-btn { padding: 18px 45px; background: transparent; color: var(--gold-light); border: 1px solid var(--gold-dark); font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 3px; cursor: pointer; transition: all 0.4s; }
         .start-btn:hover { background: var(--gold-dark); color: #161412; }
 
-        /* ===== 5. 音乐版图 (地图与名录) ===== */
-        /* 注意：这里加入了 position: relative; 让票根可以相对于整个版图定位 */
+        /* ===== 5. 音乐版图 ===== */
         #map-view { display: flex; flex-direction: row; height: 100%; overflow: hidden; padding: 20px; box-sizing: border-box; gap: 30px; position: relative;}
         
-        .roster-panel { width: 280px; height: 100%; display: flex; flex-direction: column; background: var(--surface-color); border: var(--border-gold); padding: 20px 0; box-sizing: border-box; overflow-y: auto; box-shadow: 5px 0 20px rgba(0,0,0,0.5); z-index: 10;}
-        .roster-title { font-family: var(--font-serif); color: var(--gold-light); text-align: center; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 20px; border-bottom: 1px solid rgba(182, 141, 64, 0.2); padding-bottom: 15px; }
+        .roster-panel { width: 280px; height: 100%; display: flex; flex-direction: column; background: var(--surface-color); border: var(--border-gold); padding: 20px 0; box-sizing: border-box; box-shadow: 5px 0 20px rgba(0,0,0,0.5); z-index: 10;}
+        .roster-title { font-family: var(--font-serif); color: var(--gold-light); text-align: center; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 5px; }
+        
+        /* 新增：引导提示 */
+        .roster-subtitle { text-align: center; font-size: 0.75rem; color: var(--gold-dark); margin-bottom: 20px; font-style: italic; border-bottom: 1px solid rgba(182, 141, 64, 0.2); padding-bottom: 15px; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 8px rgba(182,141,64,0.5); } }
+
+        .roster-list-wrap { overflow-y: auto; flex: 1; }
         .artist-item { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;}
         .artist-item:hover { background: rgba(182, 141, 64, 0.1); padding-left: 35px; }
         .artist-item.active { background: linear-gradient(90deg, rgba(182, 141, 64, 0.2), transparent); border-left: 4px solid var(--gold-light); }
@@ -84,50 +67,46 @@
 
         .map-container { 
             flex: 1; position: relative; overflow: hidden; border: var(--border-gold);
-            background: 
-                radial-gradient(circle at center, rgba(42, 37, 34, 0.6) 0%, #161412 80%),
-                linear-gradient(rgba(182, 141, 64, 0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(182, 141, 64, 0.08) 1px, transparent 1px);
+            background: radial-gradient(circle at center, rgba(42, 37, 34, 0.6) 0%, #161412 80%), linear-gradient(rgba(182, 141, 64, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(182, 141, 64, 0.08) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
         }
-        
-        .map-inner {
-            position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
+        .map-inner { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
         .map-container.ticket-open .map-inner { transform: translateX(-15%); }
-
         .china-map-svg { width: 90%; height: 90%; max-width: 800px; opacity: 0.4; filter: drop-shadow(0 0 10px rgba(182, 141, 64, 0.2)); }
         .map-path { fill: none; stroke: var(--gold-dark); stroke-width: 1.5; }
         
-        .trajectory-path { fill: none; stroke: var(--gold-light); stroke-width: 2; stroke-dasharray: 6 6; opacity: 0.6; animation: dashMove 30s linear infinite; }
-        @keyframes dashMove { to { stroke-dashoffset: -200; } }
-        
-        .city-pin { position: absolute; width: 14px; height: 14px; background: var(--gold-light); border-radius: 50%; border: 3px solid #161412; transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(182, 141, 64, 0.5); transition: all 0.5s ease; cursor: pointer; opacity: 0.8; z-index: 5;}
+        .city-pin { position: absolute; width: 14px; height: 14px; background: var(--gold-light); border-radius: 50%; border: 3px solid #161412; transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(182, 141, 64, 0.5); opacity: 0; transition: all 0.5s ease; cursor: pointer; z-index: 5;}
+        .city-pin.show-pin { opacity: 0.8; }
         .city-pin::after { content: attr(data-name); position: absolute; top: 20px; left: 50%; transform: translateX(-50%); font-size: 0.85rem; color: var(--gold-dark); letter-spacing: 2px; opacity: 0; transition: opacity 0.3s; white-space: nowrap; font-family: var(--font-sans); }
-        .city-pin:hover { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-        .city-pin:hover::after { opacity: 1; }
         
-        .city-pin.active { opacity: 1; border-color: var(--gold-light); background: #fff; z-index: 10; animation: pinPulse 2s infinite; }
+        /* 新增：星际涟漪动效 */
+        .city-pin .ripple-1, .city-pin .ripple-2 { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; border: 2px solid var(--gold-light); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; }
+        .city-pin.active { opacity: 1; border-color: var(--gold-light); background: #fff; z-index: 10; transform: translate(-50%, -50%) scale(1.3); }
         .city-pin.active::after { opacity: 1; color: var(--gold-light); font-weight: bold; }
-        @keyframes pinPulse {
-            0% { box-shadow: 0 0 0 0 rgba(230, 200, 135, 0.6), 0 0 15px rgba(182, 141, 64, 0.8); }
-            100% { box-shadow: 0 0 0 20px rgba(230, 200, 135, 0), 0 0 15px rgba(182, 141, 64, 0.8); transform: translate(-50%, -50%) scale(1.4); }
-        }
+        .city-pin.active .ripple-1 { animation: rippleAnim 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .city-pin.active .ripple-2 { animation: rippleAnim 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; animation-delay: 1s; }
+        
+        @keyframes rippleAnim { 0% { width: 14px; height: 14px; opacity: 0.8; } 100% { width: 80px; height: 80px; opacity: 0; border-width: 0px; } }
 
-        /* 票根弹窗 (已移出地图盒子，获得更大空间) */
+        /* 新增：时光轴 Time Machine */
+        .timeline-container { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; background: rgba(22, 20, 18, 0.8); padding: 10px 25px; border-radius: 30px; border: 1px solid rgba(182, 141, 64, 0.3); backdrop-filter: blur(8px); z-index: 20; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .year-btn { color: var(--text-muted); font-family: var(--font-serif); font-size: 0.9rem; cursor: pointer; transition: all 0.3s; padding: 5px 10px; border-radius: 15px;}
+        .year-btn:hover { color: var(--text-main); }
+        .year-btn.active { background: var(--gold-dark); color: #161412; font-weight: bold; }
+
+        /* 票根样式 */
         .ticket-overlay { position: absolute; right: -400px; top: 50%; transform: translateY(-50%); width: 340px; background: rgba(232, 220, 202, 0.95); backdrop-filter: blur(8px); padding: 15px; box-shadow: -10px 10px 40px rgba(0,0,0,0.8); transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; z-index: 50;}
         .ticket-overlay.show { right: 30px; }
-        
-        .close-ticket-btn { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(22, 20, 18, 0.1); color: #161412; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; z-index: 100; transition: background 0.3s;}
-        .close-ticket-btn:hover { background: rgba(22, 20, 18, 0.3); }
-
+        .close-ticket-btn { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(22, 20, 18, 0.1); color: #161412; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; z-index: 100;}
         .ticket-inner { border: 2px solid #161412; padding: 15px; height: 100%; display: flex; flex-direction: column; position: relative; margin-top: 15px;}
         
+        /* 新增：铁粉徽章 */
+        .hardcore-badge { position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #d4af37, #b68d40); color: #161412; font-family: var(--font-serif); font-size: 0.75rem; font-weight: bold; padding: 6px 12px; border-radius: 4px; transform: rotate(-5deg); box-shadow: 2px 4px 10px rgba(0,0,0,0.4); border: 1px solid #fff; z-index: 10; display: none; }
+        .hardcore-badge.show { display: block; animation: stampPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes stampPop { 0% { transform: scale(3) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(-5deg); opacity: 1; } }
+
         .ticket-photo-box { width: 100%; height: 200px; background: var(--bg-color); border-bottom: 2px solid #161412; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .ticket-photo { width: 100%; height: 100%; object-fit: cover; }
-        .fallback-icon { font-family: var(--font-serif); font-size: 4rem; color: var(--gold-dark); text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
-        
         .ticket-info { padding: 20px 10px 10px; color: #161412; }
         .t-artist { font-family: var(--font-serif); font-size: 1.8rem; font-weight: bold; margin-bottom: 5px; }
         .t-event { font-size: 0.9rem; font-weight: bold; color: #554a3e; margin-bottom: 20px; letter-spacing: 1px;}
@@ -137,62 +116,16 @@
         .t-value { font-family: var(--font-serif); font-size: 1rem; font-weight: bold; }
         .t-stamp { position: absolute; bottom: 10px; right: 10px; font-family: var(--font-serif); font-size: 2rem; color: rgba(182, 141, 64, 0.3); transform: rotate(-15deg); border: 2px solid rgba(182, 141, 64, 0.3); border-radius: 50%; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
 
-        /* ===== 6. 放映厅 & 7. 关于 ===== */
-        .gallery-container { max-width: 900px; margin: 40px auto; padding: 0 20px 80px;}
-        .gallery-title { font-family: var(--font-serif); font-size: 2rem; color: var(--gold-light); text-align: center; margin-bottom: 40px; letter-spacing: 4px; }
-        .frame-card { background: var(--surface-color); border: 10px solid #110f0e; padding: 15px; margin-bottom: 50px; box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 10px rgba(182, 141, 64, 0.1); position: relative; }
-        .frame-card::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border: 1px solid var(--gold-dark); pointer-events: none;}
-        .frame-media { width: 100%; aspect-ratio: 16 / 9; background: #000; object-fit: contain; }
-        .frame-plaque { margin: 20px auto 0; width: 80%; background: linear-gradient(to bottom, #d4af37, #aa7c11); padding: 2px; border-radius: 4px; text-align: center; }
-        .plaque-inner { background: #161412; padding: 15px; border-radius: 2px; }
-        .plaque-title { font-family: var(--font-serif); color: var(--gold-light); font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 5px; }
-        .plaque-desc { font-size: 0.8rem; color: var(--text-muted); }
-
-        #about-view { display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .letter-paper { background: #e8dcca; color: #23201d; max-width: 600px; padding: 50px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); position: relative; }
-        .letter-paper::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 1px solid #c5a059; pointer-events: none; }
-        .quote { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; line-height: 1.8; margin-bottom: 30px; text-align: center; color: #161412;}
-        .signature { font-family: var(--font-serif); font-size: 1.2rem; text-align: right; margin-top: 40px; font-weight: bold; }
-
-        /* ===== 移动端终极适配 ===== */
+        /* ===== 移动端适配 ===== */
         @media (max-width: 768px) {
             .navbar { padding: 0 20px; }
-            .nav-brand { font-size: 1.2rem; }
-            .nav-link { font-size: 0.75rem; }
-            .nav-links { gap: 10px; }
-            
-            #map-view { flex-direction: column; padding: 10px; gap: 10px; overflow: hidden;}
-            .roster-panel { width: 100%; height: 32%; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 10; padding: 10px 0;}
-            .roster-title { margin-bottom: 10px; padding-bottom: 10px; font-size: 1rem;}
-            .map-container { width: 100%; flex: 1; min-height: 0; border-radius: 8px;}
-            
-            .map-container.ticket-open .map-inner { transform: translateY(-5%); }
-            
-            /* 手机端：票根全面解放，从底部弹出并占据足够高度 */
-            .ticket-overlay { 
-                position: absolute; /* 相对于整个版图定位，不再困在地图格子里 */
-                width: 100%; left: 0; right: 0; 
-                bottom: -100%; top: auto; transform: none; 
-                height: auto; max-height: 85%; /* 给予高达 85% 的屏幕空间 */
-                border-radius: 20px 20px 0 0; 
-                box-shadow: 0 -15px 40px rgba(0,0,0,0.9);
-                padding: 15px;
-                overflow-y: auto; /* 内容过多可以滑动 */
-                z-index: 9999;
-            }
+            #map-view { flex-direction: column; padding: 10px; }
+            .roster-panel { width: 100%; height: 32%; flex-shrink: 0; }
+            .timeline-container { bottom: 10px; padding: 8px 15px; gap: 10px;}
+            .year-btn { font-size: 0.8rem; padding: 4px 8px;}
+            .ticket-overlay { position: absolute; width: 100%; left: 0; right: 0; bottom: -100%; top: auto; transform: none; height: auto; max-height: 85%; border-radius: 20px 20px 0 0; padding: 15px; z-index: 9999; }
             .ticket-overlay.show { bottom: 0; }
-            
-            .close-ticket-btn { top: 15px; right: 20px; background: rgba(0,0,0,0.1); width: 35px; height: 35px; }
-            
-            .ticket-inner { border: none; padding: 0; margin-top: 25px;} /* 去掉手机端多余边框 */
-            .ticket-photo-box { height: 180px; border-radius: 8px; border: none;} 
-            .t-artist { font-size: 1.6rem; }
-            .t-meta { padding: 15px 0; margin-bottom: 15px;}
-            
-            .stats-container { gap: 20px; padding: 15px 0;}
-            .stat-box { padding: 0 15px; }
-            .stat-num { font-size: 1.8rem; }
-            .letter-paper { padding: 30px; }
+            .ticket-inner { border: none; padding: 0; margin-top: 25px;}
         }
     </style>
 </head>
@@ -206,40 +139,23 @@
         <div class="nav-links">
             <div class="nav-link active" onclick="switchView('home-view', this)">首 厅</div>
             <div class="nav-link" onclick="switchView('map-view', this)">音乐版图</div>
-            <div class="nav-link" onclick="switchView('gallery-view', this)">放映室</div>
-            <div class="nav-link" onclick="switchView('about-view', this)">致热爱</div>
         </div>
-        <div class="music-btn" id="music-btn" onclick="toggleMusicPanel()">🎵</div>
+        <div class="music-btn" id="music-btn" onclick="playAudio()">🎵</div>
     </div>
 </nav>
 
-<div class="music-panel" id="music-panel">
-    <div class="player-header">VINTAGE PHONOGRAPH</div>
-    <div class="current-track-name" id="current-track-name">Loading...</div>
-    <div class="player-controls">
-        <button onclick="playPrevTrack()">⏮</button>
-        <button id="panel-play-btn" onclick="togglePlayState()">▶️</button>
-        <button onclick="playNextTrack()">⏭</button>
-    </div>
-    <div class="playlist-container" id="playlist-container"></div>
-</div>
-
 <div id="home-view" class="view-layer active" style="display: flex;">
-    <div class="home-profile"><img src="phtotos/me.jpg" alt="Zoya"></div>
+    <div class="home-profile"><img src="phtotos/me.jpg" alt="Zoya" onerror="this.src='https://via.placeholder.com/110/161412/e6c887?text=Zoya'"></div>
     <div class="hero-title">The Musical<br>Chronicles</div>
     <div class="hero-subtitle">A Private Collection of Live Memories</div>
-    <div class="stats-container">
-        <div class="stat-box"><div class="stat-num">14</div><div class="stat-label">Concerts</div></div>
-        <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">Cities</div></div>
-        <div class="stat-box"><div class="stat-num">16</div><div class="stat-label">Artists</div></div>
-    </div>
     <button class="start-btn" onclick="startJourney()">Open The Archive</button>
 </div>
 
 <div id="map-view" class="view-layer">
     <div class="roster-panel">
         <div class="roster-title">ARTIST ROSTER</div>
-        <div id="artist-list"></div>
+        <div class="roster-subtitle">👉 点击艺人，解锁专属票根</div>
+        <div class="roster-list-wrap" id="artist-list"></div>
     </div>
     
     <div class="map-container" id="map-container">
@@ -247,18 +163,31 @@
             <svg class="china-map-svg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet">
                 <path class="map-path" d="M780,180 C820,250 850,380 800,480 C750,550 680,680 500,720 C350,750 200,650 150,500 C100,380 120,280 280,220 C400,180 550,150 780,180 Z" />
                 <path class="map-path" style="stroke-width: 0.5; opacity: 0.3;" d="M700,250 C750,350 720,450 650,500 C500,600 300,550 250,450 C200,350 300,280 450,250 C550,220 650,200 700,250 Z" />
-                <path class="trajectory-path" d="M600,480 Q680,450 750,360 Q750,300 700,280" />
             </svg>
             
-            <div class="city-pin" id="pin-beijing" style="left: 70%; top: 35%;" data-name="北京 (Beijing)"></div>
-            <div class="city-pin" id="pin-qingdao" style="left: 75%; top: 45%;" data-name="青岛 (Qingdao)"></div>
-            <div class="city-pin" id="pin-yichang" style="left: 60%; top: 60%;" data-name="宜昌 (Yichang)"></div>
+            <div class="city-pin show-pin" id="pin-beijing" style="left: 70%; top: 35%;" data-name="北京">
+                <div class="ripple-1"></div><div class="ripple-2"></div>
+            </div>
+            <div class="city-pin show-pin" id="pin-qingdao" style="left: 75%; top: 45%;" data-name="青岛">
+                <div class="ripple-1"></div><div class="ripple-2"></div>
+            </div>
+            <div class="city-pin show-pin" id="pin-yichang" style="left: 60%; top: 60%;" data-name="宜昌">
+                <div class="ripple-1"></div><div class="ripple-2"></div>
+            </div>
+        </div>
+        
+        <div class="timeline-container">
+            <div class="year-btn active" onclick="filterByYear('All', this)">All</div>
+            <div class="year-btn" onclick="filterByYear('2023', this)">2023</div>
+            <div class="year-btn" onclick="filterByYear('2024', this)">2024</div>
+            <div class="year-btn" onclick="filterByYear('2025', this)">2025</div>
         </div>
     </div>
 
     <div class="ticket-overlay" id="ticket-overlay">
         <div class="close-ticket-btn" onclick="closeTicket()">×</div>
         <div class="ticket-inner">
+            <div class="hardcore-badge" id="hardcore-badge">忠实听众 · 二刷达成</div>
             <div class="ticket-photo-box" id="ticket-photo-box"></div>
             <div class="ticket-info">
                 <div class="t-artist" id="t-artist">Artist Name</div>
@@ -273,114 +202,84 @@
     </div>
 </div>
 
-<div id="gallery-view" class="view-layer">
-    <div class="gallery-container" id="gallery-container">
-        <div class="gallery-title">THE LIVE MOMENTS</div>
-    </div>
-</div>
-
-<div id="about-view" class="view-layer">
-    <div class="letter-paper">
-        <div class="quote">“耳机里的声音，<br>终有一天要站在台上听。”</div>
-        <p style="color: #554a3e; line-height: 1.8; font-size: 0.95rem;">
-            展信佳。<br><br>
-            这里是 ZOYA 的私人音乐档案馆。自 2023 年起，我开始在不同城市的风中，收集那些击中灵魂的现场声音。<br><br>
-            从宜昌到青岛，再到北京的群星闪耀。14 场相遇，16 位艺术家，不仅仅是数字，而是时光里无法被复刻的共振。<br><br>
-            此册未完，热爱继续。
-        </p>
-        <div class="signature">—— Zoya</div>
-    </div>
-</div>
-
 <script>
     const bgm = document.getElementById('bgm');
-    const playlist = [
-        { title: "这样很好 - 林志炫", src: "music/这样很好.mp3" }
-    ];
+    let isPlaying = false;
+    bgm.src = "music/这样很好.mp3"; // 你的背景音乐
 
-    let currentTrackIndex = 0; let isPlaying = false; let isPanelOpen = false;
-
-    function initAudio() {
-        const container = document.getElementById('playlist-container');
-        if(playlist.length === 0) return;
-        playlist.forEach((song, i) => {
-            const div = document.createElement('div');
-            div.className = 'playlist-item'; div.innerText = song.title;
-            div.onclick = () => { loadTrack(i); playAudio(); };
-            container.appendChild(div);
-        });
-        loadTrack(0);
-        bgm.addEventListener('ended', playNextTrack);
+    function playAudio() {
+        if(isPlaying){ bgm.pause(); isPlaying=false; document.getElementById('music-btn').classList.remove('playing');}
+        else { bgm.play().catch(()=>{}); isPlaying=true; document.getElementById('music-btn').classList.add('playing');}
     }
-
-    function loadTrack(index) {
-        currentTrackIndex = index; bgm.src = playlist[index].src;
-        document.getElementById('current-track-name').innerText = playlist[index].title;
-        document.querySelectorAll('.playlist-item').forEach((el, i) => {
-            el.classList.toggle('active', i === index);
-        });
-    }
-
-    function togglePlayState() { isPlaying ? pauseAudio() : playAudio(); }
-    function playAudio() { bgm.play().then(() => { isPlaying = true; document.getElementById('music-btn').classList.add('playing'); document.getElementById('panel-play-btn').innerText = "⏸️"; }).catch(()=>{}); }
-    function pauseAudio() { bgm.pause(); isPlaying = false; document.getElementById('music-btn').classList.remove('playing'); document.getElementById('panel-play-btn').innerText = "▶️"; }
-    function playNextTrack() { loadTrack((currentTrackIndex + 1) % playlist.length); playAudio(); }
-    function playPrevTrack() { loadTrack((currentTrackIndex - 1 + playlist.length) % playlist.length); playAudio(); }
-    function toggleMusicPanel() { isPanelOpen = !isPanelOpen; document.getElementById('music-panel').classList.toggle('show', isPanelOpen); }
 
     const memoriesData = [
         { id: 1, artist: "林志炫", event: "ONEtake2.0", date: "2023.07.08", location: "宜昌", pinId: "pin-yichang", photo: "phtotos/Terrylin.jpg" },
         { id: 2, artist: "邓紫棋", event: "I AM GLORIA", date: "2024.06.16", location: "青岛", pinId: "pin-qingdao", photo: "phtotos/GEM.jpg" },
         { id: 3, artist: "袁娅维", event: "个人巡演", date: "2024.09.21", location: "北京", pinId: "pin-beijing", photo: "phtotos/yuanyawei.jpg" },
         { id: 4, artist: "周深", event: "9.29Hz", date: "2024.09.22", location: "北京", pinId: "pin-beijing", photo: "phtotos/zhoushen.jpg" },
-        
-        { id: 5, artist: "杨宗纬", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 6, artist: "黄子弘凡", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 7, artist: "菲道尔", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 8, artist: "周传雄", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 9, artist: "王力宏", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
-        
         { id: 10, artist: "汪苏泷", event: "十万伏特", date: "2025.03.23", location: "北京", pinId: "pin-beijing", photo: "phtotos/wangsulong.jpg" },
         { id: 11, artist: "林志炫", event: "ONEtake2.0", date: "2025.03.30", location: "北京", pinId: "pin-beijing", photo: "phtotos/Terrylin2.jpg" },
-        { id: 12, artist: "张杰", event: "未·LIVE-开往1982", date: "2025.04.18", location: "北京", pinId: "pin-beijing", photo: "phtotos/zhangjie.jpg" },
-        { id: 13, artist: "李健", event: "万物安生时", date: "2025.04.20", location: "北京", pinId: "pin-beijing", photo: "phtotos/lijian.jpg" },
-        { id: 14, artist: "凤凰传奇", event: "吉祥如意", date: "2025.06.01", location: "北京", pinId: "pin-beijing", photo: "phtotos/fenghuangchuanqi.jpg" },
-        { id: 15, artist: "五月天", event: "回到那一天", date: "2025.07.27", location: "北京", pinId: "pin-beijing", photo: "phtotos/wmls.jpg" },
-        { id: 16, artist: "王心凌", event: "SUGAR HIGH2.0", date: "2025.08.15", location: "北京", pinId: "pin-beijing", photo: "phtotos/wangxinling.jpg" },
-        { id: 17, artist: "刘雨昕", event: "仙那度2.0", date: "2025.09.20", location: "北京", pinId: "pin-beijing", photo: "phtotos/liuyuxin.jpg" },
-        { id: 18, artist: "胡夏", event: "那些年", date: "2025.09.27", location: "北京", pinId: "pin-beijing", photo: "phtotos/huxia.jpg" }
+        { id: 12, artist: "张杰", event: "未·LIVE", date: "2025.04.18", location: "北京", pinId: "pin-beijing", photo: "phtotos/zhangjie.jpg" }
     ];
 
-    function initMapSystem() {
+    // 统计歌手出现次数，用于铁粉徽章
+    const artistCounts = {};
+    memoriesData.forEach(d => { artistCounts[d.artist] = (artistCounts[d.artist] || 0) + 1; });
+
+    function initMapSystem(filterYear = 'All') {
         const listDiv = document.getElementById('artist-list');
+        listDiv.innerHTML = '';
+        
+        // 隐藏所有城市图钉
+        document.querySelectorAll('.city-pin').forEach(pin => pin.classList.remove('show-pin'));
+
         memoriesData.forEach(data => {
+            const year = data.date.split('.')[0];
+            if(filterYear !== 'All' && year !== filterYear) return;
+
+            // 显示该年份有演出的城市
+            const targetPin = document.getElementById(data.pinId);
+            if(targetPin) targetPin.classList.add('show-pin');
+
             const item = document.createElement('div');
             item.className = 'artist-item';
-            const year = data.date.split('.')[0];
             item.innerHTML = `<span class="artist-name">${data.artist}</span><span class="artist-year">${year} · ${data.location}</span>`;
             
             item.onclick = () => {
                 document.querySelectorAll('.artist-item').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.city-pin').forEach(el => el.classList.remove('active'));
-                
                 item.classList.add('active');
-                const pin = document.getElementById(data.pinId);
-                if(pin) pin.classList.add('active');
-                
+                if(targetPin) targetPin.classList.add('active');
                 showTicketOverlay(data);
+                playTicketSound(); // 触发环境音效
             };
             listDiv.appendChild(item);
         });
-
-        // 点击地图其他区域也可以关闭弹窗
-        document.getElementById('map-container').addEventListener('click', (e) => {
-            if(e.target.id === 'map-inner' || e.target.id === 'map-container' || e.target.tagName === 'svg' || e.target.tagName === 'path') {
-                closeTicket();
-            }
-        });
     }
 
-    // 独立出来的关闭票根功能
+    // 利用浏览器原生接口生成极短的“落针/敲击”环境音效彩蛋，免去下载文件烦恼
+    function playTicketSound() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+            osc.connect(gainNode); gainNode.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + 0.15);
+        } catch(e) {} // 忽略不支持的浏览器
+    }
+
+    function filterByYear(year, btn) {
+        document.querySelectorAll('.year-btn').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        closeTicket();
+        initMapSystem(year);
+    }
+
     function closeTicket() {
         document.getElementById('ticket-overlay').classList.remove('show');
         document.getElementById('map-container').classList.remove('ticket-open'); 
@@ -395,83 +294,39 @@
         document.getElementById('t-location').innerText = data.location;
         
         const photoBox = document.getElementById('ticket-photo-box');
-        if(data.photo && data.photo !== "") {
-            photoBox.innerHTML = `<img src="${data.photo}" class="ticket-photo">`;
+        if(data.photo) { photoBox.innerHTML = `<img src="${data.photo}" class="ticket-photo" onerror="this.style.display='none'">`; }
+        
+        // 铁粉徽章判定
+        const badge = document.getElementById('hardcore-badge');
+        if(artistCounts[data.artist] > 1) {
+            badge.classList.add('show');
+            badge.innerText = `忠实听众 · ${artistCounts[data.artist]}刷达成`;
         } else {
-            const initial = data.artist.charAt(0);
-            photoBox.innerHTML = `<div class="fallback-icon">${initial}</div>`;
+            badge.classList.remove('show');
         }
         
         document.getElementById('ticket-overlay').classList.add('show');
         document.getElementById('map-container').classList.add('ticket-open'); 
     }
 
-    const liveGalleryData = [
-        { artist: "林志炫", title: "极致现场", desc: "ONEtake2.0 巡回演唱会宜昌站", src: "phtotos/Terrylin.jpg" },
-        { artist: "邓紫棋", title: "大合唱", desc: "青岛海风中的《光年之外》", src: "phtotos/GEM.jpg" }
-    ];
-
-    function initGallery() {
-        const container = document.getElementById('gallery-container');
-        liveGalleryData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'frame-card';
-            let media = item.src.endsWith('.mp4') 
-                ? `<video class="frame-media" controls><source src="${item.src}" type="video/mp4"></video>`
-                : `<img class="frame-media" src="${item.src}">`;
-            
-            card.innerHTML = `
-                ${media}
-                <div class="frame-plaque">
-                    <div class="plaque-inner">
-                        <div class="plaque-title">${item.artist} · ${item.title}</div>
-                        <div class="plaque-desc">${item.desc}</div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
     function switchView(viewId, navElement) {
         if(navElement) {
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             navElement.classList.add('active');
-        } else if (viewId === 'home-view') {
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            document.querySelector('.nav-link').classList.add('active');
         }
-
         document.querySelectorAll('.view-layer').forEach(view => {
             view.style.opacity = '0';
             setTimeout(() => { view.style.display = 'none'; view.classList.remove('active'); }, 400); 
         });
-
         setTimeout(() => {
             const targetView = document.getElementById(viewId);
-            targetView.style.display = (viewId === 'home-view' || viewId === 'map-view' || viewId === 'about-view') ? 'flex' : 'block';
-            
-            if(viewId !== 'gallery-view') {
-                document.querySelectorAll('#gallery-view video').forEach(v => v.pause());
-            }
-
-            setTimeout(() => {
-                targetView.style.opacity = '1';
-                targetView.classList.add('active');
-            }, 50);
+            targetView.style.display = 'flex';
+            setTimeout(() => { targetView.style.opacity = '1'; targetView.classList.add('active'); }, 50);
         }, 400);
     }
 
-    function startJourney() {
-        if(!isPlaying) playAudio(); 
-        switchView('map-view', document.querySelectorAll('.nav-link')[1]);
-    }
-
-    window.onload = () => {
-        initAudio();
-        initMapSystem();
-        initGallery();
-    };
+    function startJourney() { if(!isPlaying) playAudio(); switchView('map-view', document.querySelectorAll('.nav-link')[1]); }
+    window.onload = () => { initMapSystem(); };
 </script>
 </body>
 </html>
