@@ -181,7 +181,7 @@
 </div>
 
 <div id="home-view" class="view-layer active" style="display: flex;">
-    <div class="home-profile"><img src="photos/me.jpg" alt="Zoya"></div>
+    <div class="home-profile"><img src="phtotos/me.jpg" alt="Zoya"></div>
     <div class="hero-title">The Musical<br>Chronicles</div>
     <div class="hero-subtitle">A Private Collection of Live Memories</div>
     <div class="stats-container">
@@ -287,10 +287,10 @@
     // 2. 核心数据区 (你的“填空题”位置)
     // ==========================================
     const memoriesData = [
-        { id: 1, artist: "林志炫", event: "ONEtake2.0", date: "2023.07.08", location: "宜昌", pinId: "pin-yichang", photo: "photos/Terrylin.jpg" },
-        { id: 2, artist: "邓紫棋", event: "I AM GLORIA", date: "2024.06.16", location: "青岛", pinId: "pin-qingdao", photo: "photos/GEM.jpg" },
-        { id: 3, artist: "袁娅维", event: "个人巡演", date: "2024.09.21", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 4, artist: "周深", event: "9.29Hz", date: "2024.09.22", location: "北京", pinId: "pin-beijing", photo: "" },
+        { id: 1, artist: "林志炫", event: "ONEtake2.0", date: "2023.07.08", location: "宜昌", pinId: "pin-yichang", photo: "phtotos/Terrylin.jpg" },
+        { id: 2, artist: "邓紫棋", event: "I AM GLORIA", date: "2024.06.16", location: "青岛", pinId: "pin-qingdao", photo: "phtotos/GEM.jpg" },
+        { id: 3, artist: "袁娅维", event: "个人巡演", date: "2024.09.21", location: "北京", pinId: "pin-beijing", photo: "phtotos/yuanyawei.jpg" },
+        { id: 4, artist: "周深", event: "9.29Hz", date: "2024.09.22", location: "北京", pinId: "pin-beijing", photo: "phtotos/zhoushen.jpg" },
         
         // 拼盘演唱会 (共享同一个地点和日期，但照片你可以单独配)
         { id: 5, artist: "杨宗纬", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
@@ -299,15 +299,15 @@
         { id: 8, artist: "周传雄", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
         { id: 9, artist: "王力宏", event: "国潮星动 (群星)", date: "2024.10.05", location: "北京", pinId: "pin-beijing", photo: "" },
         
-        { id: 10, artist: "汪苏泷", event: "十万伏特", date: "2025.03.23", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 11, artist: "林志炫", event: "ONEtake2.0", date: "2025.03.30", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 12, artist: "张杰", event: "未·LIVE", date: "2025.04.18", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 13, artist: "李健", event: "万物安生时", date: "2025.04.20", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 14, artist: "凤凰传奇", event: "吉祥如意", date: "2025.06.01", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 15, artist: "五月天", event: "回到那一天", date: "2025.07.27", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 16, artist: "王心凌", event: "SUGAR HIGH", date: "2025.08.15", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 17, artist: "刘雨昕", event: "仙人掌", date: "2025.09.20", location: "北京", pinId: "pin-beijing", photo: "" },
-        { id: 18, artist: "胡夏", event: "那些年", date: "2025.09.27", location: "北京", pinId: "pin-beijing", photo: "" }
+        { id: 10, artist: "汪苏泷", event: "十万伏特", date: "2025.03.23", location: "北京", pinId: "pin-beijing", photo: "phtotos/wangsulong.jpg" },
+        { id: 11, artist: "林志炫", event: "ONEtake2.0", date: "2025.03.30", location: "北京", pinId: "pin-beijing", photo: "phtotos/Terrylin2.jpg" },
+        { id: 12, artist: "张杰", event: "未·LIVE-开往1982", date: "2025.04.18", location: "北京", pinId: "pin-beijing", photo: "phtotos/zhangjie.jpg" },
+        { id: 13, artist: "李健", event: "万物安生时", date: "2025.04.20", location: "北京", pinId: "pin-beijing", photo: "phtotos/lijian.jpg" },
+        { id: 14, artist: "凤凰传奇", event: "吉祥如意", date: "2025.06.01", location: "北京", pinId: "pin-beijing", photo: "phtotos/fenghuangchuanqi.jpg" },
+        { id: 15, artist: "五月天", event: "回到那一天", date: "2025.07.27", location: "北京", pinId: "pin-beijing", photo: "phtotos/wmls.jpg" },
+        { id: 16, artist: "王心凌", event: "SUGAR HIGH2.0", date: "2025.08.15", location: "北京", pinId: "pin-beijing", photo: "phtotos/wangxinling.jpg" },
+        { id: 17, artist: "刘雨昕", event: "仙那度2.0", date: "2025.09.20", location: "北京", pinId: "pin-beijing", photo: "phtotos/liuyuxin.jpg" },
+        { id: 18, artist: "胡夏", event: "那些年", date: "2025.09.27", location: "北京", pinId: "pin-beijing", photo: "phtotos/huxia.jpg" }
     ];
 
     // ==========================================
@@ -374,7 +374,7 @@
     // ==========================================
     const liveGalleryData = [
         { artist: "林志炫", title: "极致现场", desc: "ONEtake2.0 巡回演唱会宜昌站", src: "photos/Terrylin.jpg" },
-        { artist: "邓紫棋", title: "海边大合唱", desc: "青岛海风中的《光年之外》", src: "photos/GEM.jpg" }
+        { artist: "邓紫棋", title: "大合唱", desc: "青岛海风中的《光年之外》", src: "photos/GEM.jpg" }
     ];
 
     function initGallery() {
